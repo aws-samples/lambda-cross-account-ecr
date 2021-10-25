@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM Template for cross-account-function ECR Repo
+
+Resources:
+  HelloWorldRepo:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: cross-account-function
+      RepositoryPolicyText:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: LambdaECRImageCrossAccountRetrievalPolicy
+            Effect: Allow
+            Action:
+              - ecr:BatchGetImage
+              - ecr:GetDownloadUrlForLayer
+            Principal:
+              Service: lambda.amazonaws.com
+            Condition:
+              StringLike:
+                aws:sourceArn:
+                  - arn:aws:lambda:us-east-1:222222222222:function:*
+          - Sid: CrossAccountPermission
+            Effect: Allow
+            Action:
+              - ecr:BatchGetImage
+              - ecr:GetDownloadUrlForLayer
+            Principal:
+              AWS:
+                - arn:aws:iam::222222222222:root
+
+Outputs:
+  ERCRepositoryUri:
+    Description: "ECR RepositoryUri which may be referenced by Lambda functions"
+    Value: !GetAtt HelloWorldRepo.RepositoryUri
