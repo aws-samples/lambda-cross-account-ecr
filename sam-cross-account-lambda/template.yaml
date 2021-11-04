@@ -12,8 +12,6 @@ Resources:
     Properties:
       PackageType: Image
       ImageUri: 111111111111.dkr.ecr.us-east-1.amazonaws.com/cross-account-function:01
-      Architectures:
-        - x86_64
       Events:
         HelloWorld:
           Type: Api
